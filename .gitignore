@@ -1,0 +1,66 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Test cache
+.pytest_cache/
+
+# Private notes (not for GitHub)
+Knowledge/
+
+# C extensions
+*.so
+
+# Distribution / packaging
+bin/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+.env
+
+# Streamlit config and cache logs
+.streamlit/
+.streamlit/config.toml
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+
+# DVC and Local Data cache (exclude heavy dataset tracking inside Git)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+data/artifacts/*
+!data/artifacts/.gitkeep
+models/*
+!models/.gitkeep
+# .dvc/config is the shared DVC project config (e.g. `dvc remote add` writes here) —
+# it's meant to be committed so everyone gets the same remote, same as DVC's own
+# auto-generated .dvc/.gitignore only ignores config.local, not config. Ignoring
+# .dvc/config here would silently break "point DVC at a real remote" for anyone
+# who follows the setup and never notices it never got committed.
+.dvc/config.local
+.dvc/tmp/
+.dvc/cache/
