@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  recommender-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: harmonymix:latest
+    container_name: harmonymix_container
+    ports:
+      - "8501:8501"
+    volumes:
+      - .:/workspace
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: always

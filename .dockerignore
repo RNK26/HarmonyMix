@@ -1,0 +1,24 @@
+# Data and models are pulled via DVC / mounted at runtime, not baked into the image
+data/raw/
+data/processed/
+data/artifacts/
+models/
+
+# Version control and CI
+.git/
+.github/
+.dvc/cache/
+.dvc/tmp/
+
+# Python caches and virtual envs
+__pycache__/
+*.py[cod]
+venv/
+env/
+.env
+
+# Notebooks and local editor files
+notebooks/
+.ipynb_checkpoints/
+.vscode/
+.idea/
