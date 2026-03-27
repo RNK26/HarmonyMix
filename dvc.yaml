@@ -1,0 +1,9 @@
+stages:
+  preprocess:
+    cmd: python src/pipelines/data_pipeline.py
+    deps:
+      - src/pipelines/data_pipeline.py
+      - src/preprocessing/preprocess.py
+      - data/raw/tracks.csv
+    outs:
+      - data/processed/tracks_cleaned.csv
