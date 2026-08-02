@@ -131,7 +131,7 @@ sequenceDiagram
 
 1. Clone the repo:
    ```bash
-   git clone https://github.com/NRK26/HarmonyMix.git
+   git clone https://github.com/RNK26/HarmonyMix.git
    cd HarmonyMix
    ```
 

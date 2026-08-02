@@ -4,8 +4,8 @@ setup(
     name="harmonymix",
     version="0.1.0",
     description="A modular music recommendation engine using Content-Based, Collaborative Filtering, and Hybrid algorithms.",
-    author="NRK26",
-    url="https://github.com/NRK26/HarmonyMix",
+    author="RNK26",
+    url="https://github.com/RNK26/HarmonyMix",
     packages=find_packages(),
     install_requires=[
         "numpy>=1.20.0",

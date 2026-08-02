@@ -1,4 +1,6 @@
-# Data and models are pulled via DVC / mounted at runtime, not baked into the image
+# Excluded from the image (too large to bake in). Only present at container
+# runtime if bind-mounted (docker-compose does this by default); otherwise the
+# app falls back to demo mode. See docs/RUNNING_WITH_REAL_DATA.md.
 data/raw/
 data/processed/
 data/artifacts/
