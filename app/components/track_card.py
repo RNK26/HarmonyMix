@@ -1,8 +1,8 @@
 """
 track_card.py — Streamlit component: renders a styled info card for a single track.
 """
-import streamlit as st
 import pandas as pd
+import streamlit as st
 
 
 def render_track_card(row: pd.Series, show_preview: bool = True) -> None:

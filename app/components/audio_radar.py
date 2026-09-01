@@ -1,10 +1,9 @@
 """
 audio_radar.py — Streamlit component: renders a radar/spider chart of audio features.
 """
-import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
-
+import streamlit as st
 
 AUDIO_FEATURES = [
     'danceability', 'energy', 'speechiness',

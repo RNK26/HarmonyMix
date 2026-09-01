@@ -3,10 +3,11 @@ explore.py — Streamlit multi-page: Dataset Explorer page.
 
 Allows the user to browse, search, and filter the raw tracks DataFrame.
 """
-import streamlit as st
-import pandas as pd
-import sys
 import os
+import sys
+
+import pandas as pd
+import streamlit as st
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 

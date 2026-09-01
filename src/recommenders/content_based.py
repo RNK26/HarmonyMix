@@ -1,7 +1,8 @@
 import pandas as pd
-from scipy.sparse import issparse, csr_matrix
+from scipy.sparse import csr_matrix, issparse
 from sklearn.metrics.pairwise import cosine_similarity
-from src.preprocessing.preprocess import get_preprocessor_transformer, clean_and_prepare_dataset
+
+from src.preprocessing.preprocess import clean_and_prepare_dataset, get_preprocessor_transformer
 
 
 class ContentBasedRecommender:

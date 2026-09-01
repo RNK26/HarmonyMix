@@ -1,8 +1,8 @@
 """
 conftest.py — pytest session-level fixtures shared across all test files.
 """
-import sys
 import os
+import sys
 
 # Make sure the project root is on sys.path so `src.*` imports resolve
 # whether pytest is invoked from the root or from inside the tests/ folder.

@@ -1,6 +1,6 @@
+import logging
 import os
 import sys
-import logging
 
 # Running this file directly (`python src/pipelines/data_pipeline.py`, which is
 # what `dvc repro` does) puts src/pipelines/ on sys.path, not the project root,
@@ -9,7 +9,7 @@ import logging
 # matching the same fix already used in tests/conftest.py and app/app.py.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
-from src.preprocessing.preprocess import load_data, clean_and_prepare_dataset
+from src.preprocessing.preprocess import clean_and_prepare_dataset, load_data
 
 logger = logging.getLogger(__name__)
 

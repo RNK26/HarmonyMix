@@ -17,8 +17,8 @@ Usage
         engine = ContentBasedRecommender(df)        # fallback: re-fit
         save_model(engine, 'models/content_engine.pkl')
 """
-import os
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 

@@ -1,9 +1,10 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 setup(
     name="harmonymix",
     version="0.1.0",
-    description="A modular music recommendation engine using Content-Based, Collaborative Filtering, and Hybrid algorithms.",
+    description=("A modular music recommendation engine using Content-Based, "
+                 "Collaborative Filtering, and Hybrid algorithms."),
     author="RNK26",
     url="https://github.com/RNK26/HarmonyMix",
     packages=find_packages(),

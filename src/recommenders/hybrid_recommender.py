@@ -1,10 +1,12 @@
 import pandas as pd
-from src.recommenders.content_based import ContentBasedRecommender
+
 from src.recommenders.collaborative_filtering import CollaborativeFilteringRecommender
+from src.recommenders.content_based import ContentBasedRecommender
+
 
 class HybridRecommender:
     """Combines Content-Based Filtering and Collaborative Filtering with custom weights."""
-    
+
     def __init__(self, content_rec: ContentBasedRecommender, collab_rec: CollaborativeFilteringRecommender):
         """Initializes the hybrid recommendation engine.
 

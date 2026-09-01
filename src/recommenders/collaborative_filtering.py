@@ -2,9 +2,10 @@ import numpy as np
 import pandas as pd
 from scipy.sparse import csr_matrix
 
+
 class CollaborativeFilteringRecommender:
     """Recommender engine based on user listening history co-occurrence interactions."""
-    
+
     def __init__(self, playlist_df: pd.DataFrame):
         """Initializes the collaborative recommender.
 
@@ -24,6 +25,27 @@ class CollaborativeFilteringRecommender:
         self.raw_row_count = len(playlist_df)
 
         self._build_cooccurrence_matrix(playlist_df)
+
+    @classmethod
+    def from_matrix(cls, cooccurrence_matrix, tracks):
+        """Builds an engine from an already-computed co-occurrence matrix.
+
+        The deployed demo ships a precomputed matrix instead of the 575 MB
+        interaction table, so there is nothing to count and the normal
+        constructor has no input to work from. Scoring is unchanged: this sets
+        up exactly the attributes get_recommendations reads.
+
+        Note the matrix built this way is truncated to each track's strongest
+        neighbours, so tracks outside that set score 0 rather than something
+        small and positive. See scripts/build_demo_bundle.py.
+        """
+        engine = cls.__new__(cls)
+        engine.tracks = np.asarray(tracks)
+        engine.track_to_idx = {t: i for i, t in enumerate(engine.tracks)}
+        engine.cooccurrence_matrix = cooccurrence_matrix.tocsr()
+        engine.interaction_matrix = None
+        engine.raw_row_count = None
+        return engine
 
     def _build_cooccurrence_matrix(self, playlist_df: pd.DataFrame):
         """Builds track-to-track co-occurrence tables to capture social context.
@@ -52,21 +74,21 @@ class CollaborativeFilteringRecommender:
         # Track-track similarity is computed via co-occurrence dot-product: X.T * X
         # Diagonal elements are count occurrences of single track.
         self.cooccurrence_matrix = self.interaction_matrix.T.dot(self.interaction_matrix)
-        
+
     def get_recommendations(self, track_id: str, top_n: int = 10) -> pd.DataFrame:
         """Looks up track associations in playlist interaction spaces.
-        
+
         Args:
             track_id: Target track ID.
             top_n: Max tracks returned.
-            
+
         Returns:
             DataFrame containing recommended track_ids and score associations.
         """
         if track_id not in self.track_to_idx:
             # Reverts with empty dataframe if song lacks playlist occurrences (cold start)
             return pd.DataFrame(columns=['track_id', 'collaborative_score'])
-            
+
         target_idx = self.track_to_idx[track_id]
 
         # Get target column/row representing counts of joint playlist inclusions
@@ -81,12 +103,12 @@ class CollaborativeFilteringRecommender:
         frequencies = self.cooccurrence_matrix.diagonal()
         target_frequency = frequencies[target_idx]
         scores = co_counts / (np.sqrt(target_frequency * frequencies) + 1e-9)
-        
+
         results = pd.DataFrame({
             'track_id': self.tracks,
             'collaborative_score': scores
         })
-        
+
         # Filter target song and use nlargest for partial sorting
         recommendations = results[results['track_id'] != track_id]
         return recommendations.nlargest(top_n, 'collaborative_score')

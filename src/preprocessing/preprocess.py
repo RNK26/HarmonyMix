@@ -1,7 +1,7 @@
 import pandas as pd
-from sklearn.preprocessing import MinMaxScaler, StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import MinMaxScaler, OneHotEncoder, StandardScaler
 
 try:
     from category_encoders.count import CountEncoder
@@ -45,10 +45,10 @@ except ImportError:
 
 def load_data(filepath: str) -> pd.DataFrame:
     """Loads a CSV dataset containing track listings.
-    
+
     Args:
         filepath: Path to the raw tracks CSV.
-        
+
     Returns:
         Loaded Pandas DataFrame.
     """
@@ -76,7 +76,8 @@ def get_preprocessor_transformer(df: pd.DataFrame) -> ColumnTransformer:
                           "acousticness", "instrumentalness", "liveness", "valence"]
 
     present = set(df.columns)
-    keep = lambda cols: [c for c in cols if c in present]
+    def keep(cols):
+        return [c for c in cols if c in present]
 
     transformers = []
     if keep(frequency_encode_cols):
@@ -107,10 +108,10 @@ def get_preprocessor_transformer(df: pd.DataFrame) -> ColumnTransformer:
 
 def clean_and_prepare_dataset(df: pd.DataFrame) -> pd.DataFrame:
     """Cleans null values and lowercases categorical names.
-    
+
     Args:
         df: Input raw tracks DataFrame.
-        
+
     Returns:
         DataFrame clean tracks.
     """
@@ -118,23 +119,23 @@ def clean_and_prepare_dataset(df: pd.DataFrame) -> pd.DataFrame:
     if 'spotify_id' in df_clean.columns:
         df_clean.drop_duplicates(subset=["spotify_id", "year", "duration_ms"], inplace=True)
     df_clean.reset_index(drop=True, inplace=True)
-    
+
     if 'artist' in df_clean.columns:
         df_clean['artist'] = df_clean['artist'].astype(str).str.lower().str.strip()
     if 'tags' in df_clean.columns:
         df_clean['tags'] = df_clean['tags'].fillna("no_tags").astype(str).str.lower()
-    
+
     # Cast integer categorical columns to string for OneHotEncoder compatibility
     for col in ['key', 'time_signature', 'mode']:
         if col in df_clean.columns:
             df_clean[col] = df_clean[col].fillna(-1).astype(int).astype(str)
-    
+
     # Fill NaN for numeric columns to avoid transformer errors
     numeric_cols = ["duration_ms", "loudness", "tempo", "danceability", "energy",
                     "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "year"]
     for col in numeric_cols:
         if col in df_clean.columns:
             df_clean[col] = pd.to_numeric(df_clean[col], errors='coerce').fillna(0)
-        
+
     return df_clean
 

@@ -6,9 +6,6 @@ __pycache__/
 # Test cache
 .pytest_cache/
 
-# Private notes (not for GitHub)
-Knowledge/
-
 # C extensions
 *.so
 
@@ -56,11 +53,12 @@ data/artifacts/*
 !data/artifacts/.gitkeep
 models/*
 !models/.gitkeep
-# .dvc/config is the shared DVC project config (e.g. `dvc remote add` writes here) —
-# it's meant to be committed so everyone gets the same remote, same as DVC's own
-# auto-generated .dvc/.gitignore only ignores config.local, not config. Ignoring
-# .dvc/config here would silently break "point DVC at a real remote" for anyone
-# who follows the setup and never notices it never got committed.
+# .dvc/config stays tracked so the remote is shared; the local override isn't.
 .dvc/config.local
 .dvc/tmp/
 .dvc/cache/
+
+# MLflow local tracking store (SQLite backend, MLflow 3.x default)
+mlflow.db
+mlruns/
+mlartifacts/

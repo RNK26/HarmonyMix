@@ -1,0 +1,24 @@
+# Ruff configuration.
+#
+# The CI workflow is named "Python Lint, Test and Docker Build" but ran no
+# linter until this was added -- the name promised something the pipeline did
+# not do.
+
+line-length = 120
+target-version = "py39"
+exclude = [".venv", "venv", "__pycache__", ".dvc", "notebooks"]
+
+[lint]
+# A deliberately pragmatic set rather than every rule ruff offers:
+#   E/W  pycodestyle    - formatting and whitespace
+#   F    pyflakes       - real bugs: unused imports, undefined names
+#   I    isort          - import ordering
+#   UP   pyupgrade      - outdated syntax for the target Python version
+# Rules that would force stylistic rewrites of working, tested code are left
+# out on purpose; the goal is catching mistakes, not churning the codebase.
+select = ["E", "W", "F", "I", "UP"]
+
+[lint.per-file-ignores]
+# Streamlit apps must call st.set_page_config() before any other st.* call,
+# which forces imports and module-level code to interleave.
+"app/app.py" = ["E402"]

@@ -1,9 +1,12 @@
 import unittest
-import pandas as pd
+
 import numpy as np
-from src.recommenders.content_based import ContentBasedRecommender
+import pandas as pd
+
 from src.recommenders.collaborative_filtering import CollaborativeFilteringRecommender
+from src.recommenders.content_based import ContentBasedRecommender
 from src.recommenders.hybrid_recommender import HybridRecommender
+
 
 class TestContentBasedRecommender(unittest.TestCase):
     def setUp(self):
