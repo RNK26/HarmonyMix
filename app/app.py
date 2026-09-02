@@ -206,10 +206,10 @@ if not song_list:
     st.stop()
 
 # ── Demo presets ──────────────────────────────────────────────────────────────
-# Two one-click examples so the two behaviours can be shown deliberately rather
-# than hoped for: a heavily-listened track where collaborative filtering has
-# plenty of signal, and a track with no listening history at all where the
-# cold-start fallback fires. The contrast between them IS the design story.
+# Two one-click examples so both behaviours can be shown on demand rather than
+# hoped for: a heavily-listened track where collaborative filtering has plenty
+# of signal, and one with no listening history where the cold-start fallback
+# fires instead.
 @st.cache_data(show_spinner=False)
 def get_preset_tracks(_tracks_df: pd.DataFrame, _listener_counts: pd.Series
                       ) -> tuple[str | None, str | None]:

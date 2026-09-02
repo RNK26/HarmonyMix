@@ -16,9 +16,10 @@ builds the image.
 7. [Tech used](#tech-used)
 8. [Installation](#installation)
 9. [Running the app](#running-the-app)
-10. [Results](#results)
-11. [Limitations](#limitations)
-12. [Future improvements](#future-improvements)
+10. [Deployed demo](#deployed-demo)
+11. [Results](#results)
+12. [Limitations](#limitations)
+13. [Future improvements](#future-improvements)
 
 ## Overview
 There are a lot of songs and it is hard to find new ones you like. This project
@@ -52,8 +53,9 @@ and place the two files under `data/raw/`. Fitted models (`models/*.pkl`) are no
 committed either; they're generated locally the first time the app runs and then
 cached to disk.
 
-If `data/raw/tracks.csv` is missing, the app falls back to a small synthetic sample
-so it still runs — the UI marks this clearly as demo mode.
+If the full dataset is missing, the app runs on the committed demo bundle instead
+(see [Deployed demo](#deployed-demo)). The header says which of the two you are
+looking at.
 
 ## Architecture
 
@@ -143,8 +145,8 @@ sequenceDiagram
    ```
 
 3. Add the dataset: place `tracks.csv` and `playlists.csv` under `data/raw/` (see
-   [Dataset](#dataset)). Without it, the app still runs in demo mode with synthetic
-   sample data.
+   [Dataset](#dataset)). Without it the app runs on the smaller demo bundle that
+   ships with the repo, which is real data, just less of it.
 
 4. (Optional) Regenerate the cleaned tracks CSV via the local DVC stage:
    ```bash
@@ -169,6 +171,53 @@ docker run -p 8501:8501 harmonymix
 The recommendation engines are fitted once and cached to `models/*.pkl`; the first
 run takes longer than later ones. Use the "Re-fit engines" button in the sidebar
 after changing the dataset.
+
+## Deployed demo
+
+The hosted version does not run on the full dataset and I would rather say so than
+have someone assume it does.
+
+`playlists.csv` is 575 MB and the fitted collaborative engine is 250 MB. GitHub
+rejects any file over 100 MB, so neither can live in the repo, and for a long time
+the deployment had no data at all — it fell through to a synthetic sample that
+invented track names like "Song 42" and returned zero for every collaborative
+score. That fallback is gone. Inventing data is a worse failure than refusing to
+start, so `load_tracks` now raises if it finds nothing.
+
+In its place, `scripts/build_demo_bundle.py` writes two small files that are
+committed:
+
+| File | Contents | Size |
+|---|---|---:|
+| `data/tracks_demo.csv` | the 10,000 most-listened tracks, real names and audio features | 3.1 MB |
+| `data/collab_matrix.npz` | their co-occurrence matrix, 100 neighbours per track | 2.9 MB |
+
+Subsetting tracks on its own does not help, which surprised me. The co-occurrence
+submatrix for the 1,000 most popular tracks is 99.5% dense — popular tracks appear
+next to nearly everything — so it is 11.9 MB for a thousand songs and 232 MB for
+five thousand. What makes it small is dropping each track's weak neighbours: 82
+million non-zeros become 1 million, and 250 MB becomes 2.9 MB.
+
+What actually differs from a local run: tracks outside a query's kept 100
+neighbours score exactly 0 collaboratively rather than something small and
+positive, so the hybrid blend sees a slightly sparser collaborative signal at the
+edges. Measured across 300 sampled tracks against the full engine restricted to the
+same 10,000-track catalogue, the demo reproduces the full top 10 exactly 297 times
+out of 300, with 99.9% mean overlap.
+
+Getting there needed one non-obvious detail. Truncating on the raw co-occurrence
+count only managed 226/300 and 94.1% overlap, because the engine ranks on
+`count / sqrt(freq_a * freq_b)`, not on the count. That normalisation lifts
+neighbours that co-occur less often but are far less popular, and cutting on the
+raw count throws some of them out before they can climb. The bundle therefore picks
+which entries to keep using the normalised score, while still storing raw counts,
+since raw counts are what the engine divides.
+
+The other 20,459 tracks with listening history are simply absent from the hosted
+catalogue, so cold-start behaviour is under-represented there compared to local.
+
+Run it against the full data locally and none of this applies — the full pipeline
+is untouched.
 
 ## Results
 
@@ -199,6 +248,10 @@ Quality is measured with a leave-one-out check on the listening data
   rows, so tags are used as the main text signal instead.
 * Adding new songs requires rebuilding the models locally; there's no online/
   incremental learning or per-user personalization yet.
+* The hosted demo runs on 10,000 of the 30,459 tracks that have listening history,
+  with each track's 100 strongest neighbours kept. Top-10 recommendations match the
+  full engine 99.9% of the time, but it is not the same thing as a local run — see
+  [Deployed demo](#deployed-demo).
 
 ## Future improvements
 * Faster similarity search with approximate nearest neighbours (FAISS or Annoy)
@@ -209,3 +262,5 @@ Quality is measured with a leave-one-out check on the listening data
 * More evaluation metrics, such as NDCG and Precision@K.
 * Mood filtering using energy/valence thresholds, and lyrics embeddings as an extra
   content signal.
+
+Run locally: clone the repo, `pip install -r requirements.txt`, then `streamlit run app/app.py`. It runs on the committed demo bundle if the full dataset isn't present.
