@@ -263,4 +263,6 @@ Quality is measured with a leave-one-out check on the listening data
 * Mood filtering using energy/valence thresholds, and lyrics embeddings as an extra
   content signal.
 
+Live demo: https://harmonymix-bn6hwa7sxvg7yjybtemrsk.streamlit.app/
+
 Run locally: clone the repo, `pip install -r requirements.txt`, then `streamlit run app/app.py`. It runs on the committed demo bundle if the full dataset isn't present.
